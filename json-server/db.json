@@ -2,7 +2,20 @@
   "users": [
     {
       "id": 4,
-      "name": "Another Test anammme"
+      "name": "Test Username",
+      "age": 25
+    },
+    {
+      "name": "Test",
+      "age": 32,
+      "isAdmin": true,
+      "id": 5
+    },
+    {
+      "name": "Test",
+      "age": 32,
+      "isAdmin": true,
+      "id": 6
     }
   ]
 }

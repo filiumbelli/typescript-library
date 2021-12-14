@@ -3,9 +3,14 @@ type Events = { [key: string]: Callback[] } | {};
 
 export class Eventing {
 
+    constructor() {
+        this.on = this.on.bind(this);
+        this.trigger = this.trigger.bind(this);
+    }
+
     private eventDelegator: Events = {}
 
-    on(eventName: string, callback: Callback): void {
+    on = (eventName: string, callback: Callback): void => {
 
         // previous events for eventName
         const handler: Callback[] = this.eventDelegator[eventName] || [];
@@ -16,7 +21,7 @@ export class Eventing {
         // update main item
         this.eventDelegator[eventName] = handler;
     }
-    trigger(eventName: string) {
+    trigger = (eventName: string): void => {
         // check if any event to trigger exists
         const handler: Callback[] = this.eventDelegator[eventName];
         if (eventName == "" || !handler || handler.length === 0) {

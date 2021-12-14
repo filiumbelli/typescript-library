@@ -1,38 +1,27 @@
-import { usersApi } from "../api/usersApi";
-import { AxiosResponse } from "axios";
-import { Eventing } from "./Eventing";
+import { Attributes } from "./Attributes";
+import { Model } from "./Model";
 import { Sync } from "./Sync";
+import { Eventing } from "./Eventing";
+import { Collection } from "./Collection";
 
 export interface UserProps {
     id?: number,
     name?: string,
-    age?: number
+    age?: number,
+    isAdmin?: boolean
 }
-type properties = "id" | "name" | "age"
-export class User {
 
-    public events: Eventing = new Eventing();
-    private sync: Sync = new Sync();
+const baseURL = "http://localhost:3000/users";
 
-    constructor(private data: UserProps) { }
-
-    get(propName: properties): (number | string) {
-        return this.data[propName];
-    }
-    set(update: UserProps): void {
-        console.log(update);
-        Object.assign(this.data, update);
-        console.log(this);
+export class User extends Model<UserProps>{
+    constructor(attrs: UserProps) {
+        super(new Eventing(), new Sync(baseURL), new Attributes(attrs));
     }
 
-    async fetch(): Promise<UserProps> {
-        const response = await this.sync.fetch(this);
-        return response;
+    isAdmin = (): boolean => {
+        return this.get("isAdmin");
     }
-
-    async save(): Promise<void> {
-        console.log(this);
-        await this.sync.save(this.data);
+    static buildCollection = (): Collection<User, UserProps> => {
+        return new Collection<User, UserProps>(baseURL, (json: UserProps) => new User(json))
     }
-
 }

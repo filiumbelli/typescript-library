@@ -1,21 +1,22 @@
-import { AxiosResponse } from "axios";
-import { usersApi } from "../api/usersApi";
-import { User, UserProps } from "./User";
-export class Sync {
-    async fetch(user: User): Promise<UserProps> {
-        const response: AxiosResponse = await usersApi.get(`/${user.get("id")}`);
-        return response.data;
+import axios, { AxiosPromise } from "axios";
+
+
+interface HasId {
+    id?: number | string
+}
+
+export class Sync<T extends HasId> {
+    constructor(public routeUrl: string) {
+
     }
-    async save(data: UserProps): Promise<void> {
-        const id = data.id
-        if (id && (data.name || data.age)) {
-            await usersApi.put(`/${data.id}`, data);
-            return;
+    fetch = (id: string | number): AxiosPromise => {
+        return axios.get(`${this.routeUrl}/${id}`);
+    }
+    save = (data: T): AxiosPromise => {
+        if (typeof data.id === "number" || typeof data.id === "string") {
+            return axios.put(`${this.routeUrl}/${data.id}`, data);
+        } else {
+            return axios.post(`${this.routeUrl}`, data);
         }
-        if (!id && data.age && data.name) {
-            await usersApi.post("", data);
-            return;
-        }
-        return;
     }
 }
